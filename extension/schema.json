@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "configJson": {
+      "type": "string",
+      "description": "JSON: { rules:[{host,pathPrefix,whitelist}], keywords:[...], genericPorn:bool }"
+    }
+  }
+}

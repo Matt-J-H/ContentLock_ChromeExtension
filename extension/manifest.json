@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "ContentLock",
+  "version": "1.0.0",
+  "description": "ContentLock in-browser filtering: path-level site rules and keyword blocking.",
+  "permissions": [
+    "declarativeNetRequest",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "blocked.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "storage": {
+    "managed_schema": "schema.json"
+  }
+}
