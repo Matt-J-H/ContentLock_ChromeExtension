@@ -1,14 +1,11 @@
 {
   "manifest_version": 3,
   "name": "ContentLock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ContentLock in-browser filtering: path-level site rules and keyword blocking.",
   "permissions": [
     "declarativeNetRequest",
     "storage"
-  ],
-  "host_permissions": [
-    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
@@ -38,5 +35,10 @@
   ],
   "storage": {
     "managed_schema": "schema.json"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   }
 }

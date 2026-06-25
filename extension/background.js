@@ -36,10 +36,13 @@ async function rebuildRules() {
         condition: { urlFilter: urlFilterFor(r), resourceTypes: ["main_frame", "sub_frame"] }
       });
     } else {
+      // Plain block (no host permissions required, unlike redirect). The browser shows its own
+      // "blocked" error for site rules; keyword hits still get the branded blocked.html via the
+      // content script. Allow rules (above) keep beating block via higher priority.
       dynamic.push({
         id: id++,
         priority: BLOCK_PRIORITY,
-        action: { type: "redirect", redirect: { extensionPath: "/blocked.html" } },
+        action: { type: "block" },
         condition: { urlFilter: urlFilterFor(r), resourceTypes: ["main_frame"] }
       });
     }
