@@ -1,8 +1,8 @@
 // ContentLock content script.
 //   (1) Keyword scanner: if a blocked word appears as a whole word in the page text, block.
 //   (2) SPA path guard: declarativeNetRequest only blocks real main_frame navigations, so a
-//       single-page app that goes from an allowed subpath (poe.com/123) to a blocked one
-//       (poe.com/111) via the History API never triggers DNR. This watches client-side URL
+//       single-page app that goes from an allowed subpath (example.com/123) to a blocked one
+//       (example.com/111) via the History API never triggers DNR. This watches client-side URL
 //       changes and blocks non-whitelisted paths, mirroring the site-rule semantics.
 
 let regex = null;
@@ -35,12 +35,19 @@ function hostMatches(ruleHost, host) {
   return host === ruleHost || host.endsWith("." + ruleHost);
 }
 
-function pathShouldBlock() {
+// Is the current page explicitly allowed (a whitelist rule matches)? Empty pathPrefix = whole host.
+// Explicitly-allowed sites (e.g. therapy / group-support pages) are exempt from BOTH path-blocking
+// and keyword-blocking, since they legitimately discuss things you otherwise block.
+function isAllowed() {
   const host = location.hostname.toLowerCase();
   const path = location.pathname || "/";
-  // A whitelist rule wins, like the higher-priority allow DNR rule. Empty pathPrefix = whole host.
-  const allowed = rules.some(r => r.whitelist && hostMatches(r.host, host) && path.startsWith(r.pathPrefix || ""));
-  if (allowed) return false;
+  return rules.some(r => r.whitelist && hostMatches(r.host, host) && path.startsWith(r.pathPrefix || ""));
+}
+
+function pathShouldBlock() {
+  if (isAllowed()) return false;   // a whitelist rule wins, like the higher-priority allow DNR rule
+  const host = location.hostname.toLowerCase();
+  const path = location.pathname || "/";
   return rules.some(r => !r.whitelist && hostMatches(r.host, host) && path.startsWith(r.pathPrefix || ""));
 }
 
@@ -51,6 +58,7 @@ function checkPath() {
 // ---- keyword scan ----
 function scan() {
   if (!regex || scanning) return;
+  if (isAllowed()) return;   // don't keyword-scan explicitly-allowed sites (therapy/support/etc.)
   scanning = true;
   try {
     const text = (document.body && document.body.innerText) ? document.body.innerText : "";
