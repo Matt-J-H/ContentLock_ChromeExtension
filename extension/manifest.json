@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ContentLock",
-  "version": "1.0.3",
-  "description": "ContentLock in-browser filtering: path-level site rules and keyword blocking.",
+  "version": "1.0.5",
+  "description": "ContentLock in-browser filtering: path-level site rules, keyword blocking, and Reddit NSFW filtering.",
   "permissions": [
     "declarativeNetRequest",
     "storage"
@@ -21,12 +21,24 @@
       ],
       "run_at": "document_idle",
       "all_frames": false
+    },
+    {
+      "matches": [
+        "*://reddit.com/*",
+        "*://*.reddit.com/*"
+      ],
+      "js": [
+        "reddit.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "blocked.html"
+        "blocked.html",
+        "blocked.js"
       ],
       "matches": [
         "<all_urls>"
